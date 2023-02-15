@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:td_flutter/models/Habitation.dart';
+import 'package:td_flutter/models/typehabitat.dart';
+import 'package:td_flutter/share/location_style.dart';
+import 'package:td_flutter/share/location_text_style.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Locations',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -24,92 +29,140 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Mes locations'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
+class MyHomePage extends StatelessWidget {
   final String title;
+  MyHomePage({required this.title, Key? key}) : super(key: key);
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  var _typehabitats = [TypeHabitat(1, "Maison"), TypeHabitat(2, "Appartement")];
+  var _habitations = [
+    Habitation(1, "maison.png", "Maison méditerranéenne",
+        "12 Rue du Coq qui chante", 3, 92, 600),
+    Habitation(
+        2, "appartement.png", "Appartement neuf", "Rue de la soif", 1, 50, 555),
+    Habitation(3, "appartement.png", "Appartement 1", "Rue 1", 1, 51, 401),
+    Habitation(4, "appartement.png", "Appartement 2", "Rue 2", 1, 52, 402),
+    Habitation(5, "maison.png", "Maison 1", "Rue M1", 3, 101, 701),
+    Habitation(6, "maison.png", "Maison 2", "Rue M2", 3, 102, 702),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+          children: [
+            SizedBox(height: 30),
+            _buildTypeHabitat(),
+            SizedBox(height: 30),
+            _buildDerniereLocation(context),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  _buildTypeHabitat() {
+    return Container(
+        padding: EdgeInsets.all(6.0),
+        height: 100,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(_typehabitats.length,
+              (index) => _buildHabitat(_typehabitats[index])),
+        ));
+  }
+
+  _buildHabitat(TypeHabitat typeHabitat) {
+    var icon = Icons.house;
+    switch (typeHabitat.id) {
+      case 1:
+        icon = Icons.house;
+        break;
+      case 2:
+        icon = Icons.apartment;
+        break;
+      default:
+        icon = Icons.home;
+    }
+    return Expanded(
+        child: Container(
+      height: 80,
+      decoration: BoxDecoration(
+        color: LocationStyle.backgroundColorPurple,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      margin: EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: Colors.white70,
+          ),
+          SizedBox(width: 5),
+          Text(
+            typeHabitat.libelle,
+            style: LocationTextStyle.regularWhiteTextStyle,
+          )
+        ],
+      ),
+    ));
+  }
+
+  _buildDerniereLocation(BuildContext context) {
+    return Container(
+      height: 240,
+      child: ListView.builder(
+        itemCount: _habitations.length,
+        itemExtent: 220,
+        itemBuilder: (context, index) =>
+            _buildRow(_habitations[index], context),
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
+
+  _buildRow(Habitation habitation, BuildContext context) {
+    var format = NumberFormat("### €");
+    return Container(
+      width: 240,
+      margin: EdgeInsets.all(4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: Image.asset(
+              'assets/images/locations/${habitation.image}',
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          Text(
+            habitation.libelle,
+            style: LocationTextStyle.regularTextStyle,
+          ),
+          Row(
+            children: [
+              Icon(Icons.location_on_outlined),
+              Text(
+                habitation.adresse,
+                style: LocationTextStyle.regularTextStyle,
+              ),
+            ],
+          ),
+          Text(format.format(habitation.prixmois),
+              style: LocationTextStyle.boldTextStyle),
+        ],
+      ),
     );
   }
 }
