@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
+import 'package:td_flutter/views/share/habitation_features_widget.dart';
 
 import '../models/habitation.dart';
 import '../services/habitation_service.dart';
+import 'habitation_details.dart';
 import 'share/habitation_option.dart';
 
 class HabitationList extends StatelessWidget {
@@ -20,8 +22,7 @@ class HabitationList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text("Liste des ${this.isHouseList ? "maisons" : "appartements"}"),
+        title: Text("Liste des ${isHouseList ? "maisons" : "appartements"}"),
       ),
       body: Center(
         child: ListView.builder(
@@ -37,21 +38,15 @@ class HabitationList extends StatelessWidget {
   _buildRow(Habitation habitation, BuildContext context) {
     return Container(
       margin: EdgeInsets.all(4.0),
-      child: Column(
-        children: [
-          Container(
-            height: 150,
-            width: MediaQuery.of(context).size.width,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Image.asset(
-                "assets/images/locations/${habitation.image}",
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          )
-        ],
-      ),
+      child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HabitationDetails(habitation)),
+            );
+          },
+          child: Card(child: _buildDetails(habitation))),
     );
   }
 
@@ -60,6 +55,16 @@ class HabitationList extends StatelessWidget {
     return Container(
         child: Column(
       children: [
+        Container(
+          height: 150,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: Image.asset(
+              "assets/images/locations/${habitation.image}",
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+        ),
         Row(
           children: [
             Expanded(
@@ -79,13 +84,7 @@ class HabitationList extends StatelessWidget {
             )
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            HabitationOption(Icons.group, "${habitation.chambres} personnes"),
-            HabitationOption(Icons.fit_screen, "${habitation.superficie} m²"),
-          ],
-        )
+        HabitationFeaturesWidget(habitation),
       ],
     ));
   }
