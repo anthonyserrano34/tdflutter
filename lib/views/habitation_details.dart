@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
+import 'package:td_flutter/views/resa_location.dart';
 import 'package:td_flutter/views/share/habitation_features_widget.dart';
 import 'package:td_flutter/views/share/habitation_option.dart';
 import '../models/habitation.dart';
@@ -34,9 +35,14 @@ class _HabitationDetailsState extends State<HabitationDetails> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(8.0),
-            child: Text(widget._habitation.adresse),
-          ),
+              margin: EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(widget._habitation.libelle,
+                      style: LocationTextStyle.boldTextStyle),
+                  Text(widget._habitation.adresse),
+                ],
+              )),
           HabitationFeaturesWidget(widget._habitation),
           _buildItems(),
           _buildOptionsPayantes(),
@@ -48,9 +54,8 @@ class _HabitationDetailsState extends State<HabitationDetails> {
 
   _buildItems() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
+        padding: const EdgeInsets.all(8.0),
+        child: Column(children: [
           Row(
             children: [
               Text(
@@ -71,24 +76,21 @@ class _HabitationDetailsState extends State<HabitationDetails> {
           Wrap(
               spacing: 2.0,
               children: Iterable.generate(
-                  widget._habitation.options.length,
+                  widget._habitation.optionsPayantes.length,
                   (i) => Container(
                         padding: const EdgeInsets.only(left: 15.0, top: 10.0),
                         margin: const EdgeInsets.all(2.0),
                         child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(widget._habitation.options[i].libelle,
+                            Text(widget._habitation.optionsPayantes[i].libelle,
                                 style: LocationTextStyle.boldTextStyle),
-                            Text(widget._habitation.options[i].description,
+                            Text(
+                                '${widget._habitation.optionsPayantes[i].prix.toString()} €',
                                 style: LocationTextStyle.regularGreyTextStyle),
                           ],
                         ),
                       )).toList())
-        ],
-      ),
-    );
+        ]));
   }
 
   _buildOptionsPayantes() {
@@ -151,9 +153,13 @@ class _HabitationDetailsState extends State<HabitationDetails> {
           margin: EdgeInsets.symmetric(horizontal: 8.0),
           child: ElevatedButton(
             onPressed: () {
-              print('Louer habitation');
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ResaLocation(widget._habitation),
+                  ));
             },
-            child: Text('Louer'),
+            child: Text('Réserver'),
           ),
         ),
       ]),

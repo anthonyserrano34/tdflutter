@@ -497,7 +497,7 @@ class HabitationsData {
     },
     {
       "id": 17,
-      "typehabitat": {"id": 1, "libelle": "Maison"},
+      "typehabitat": {"id": 2, "libelle": "Appartement"},
       "items": [
         {
           "id": 3,

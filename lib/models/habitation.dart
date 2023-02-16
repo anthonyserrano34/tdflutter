@@ -75,3 +75,11 @@ class OptionPayante extends Option {
       : prix = json['prix'],
         super.fromJson(json);
 }
+
+class OptionPayanteCheck extends OptionPayante {
+  bool checked;
+
+  OptionPayanteCheck(int id, String libelle, this.checked,
+      {String description = "", required double prix})
+      : super(id, libelle, description: description, prix: prix);
+}
